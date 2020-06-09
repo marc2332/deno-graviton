@@ -1,0 +1,19 @@
+{
+	"name": "Deno",
+	"version": "1.0.0",
+	"id": "deno-plugin",
+	"mainSrc": "main.js",
+	"mainDev": "dist/main.js",
+	"author": "Marc Espín Sanz <mespinsanz@gmail.com>",
+	"main": "main.js",
+	"scripts": {
+		"watch": "gvsdk --entry package.json --target plugin --mode dev",
+		"build": "gvsdk --entry package.json --target plugin --mode release"
+	},
+	"dependencies": {
+		"yaml": "^1.10.0"
+	},
+	"devDependencies": {
+		"@gveditor/sdk": "^0.1.4"
+	}
+}
