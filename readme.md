@@ -6,7 +6,7 @@ Thing it allows to:
 
 WIP, Contributions / suggestions are welcomed.
 
-## Developing
+## 🕹 Developing
 Clone the repo to the desired .graviton2/plugins:
 ```shell
 git clone https://github.com/marc2332/deno-graviton.git 
