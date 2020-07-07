@@ -4,7 +4,7 @@
 	"id": "deno-plugin",
 	"mainSrc": "main.js",
 	"mainDev": "dist/main.js",
-	"author": "Marc Espín Sanz <mespinsanz@gmail.com>",
+	"author": "Marc Espín Sanz",
 	"main": "main.js",
 	"scripts": {
 		"watch": "gvsdk --entry package.json --target plugin --mode dev",
