@@ -15,6 +15,6 @@
 		"yaml": "^1.10.0"
 	},
 	"devDependencies": {
-		"@gveditor/sdk": "^0.1.4"
+		"@gveditor/sdk": "^0.2.2"
 	}
 }
