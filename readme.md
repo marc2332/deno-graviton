@@ -1,10 +1,6 @@
-## 🦕 Deno Graviton [WIP]
+## 🦕 Deno Graviton
 
-### Requirements
-
-- [deno](https://deno.land/) >= 1.2.0
-
-- install [typescript-deno-plugin](https://www.npmjs.com/package/typescript-deno-plugin) in the workspace
+Deno plugin, allows you to inspect your projects that use Velociprator (https://github.com/umbopepato/velociraptor), and also of TypeScript's Deno Plugin (https://www.npmjs.com/package/typescript-deno-plugin)
 
 ### Setup
 

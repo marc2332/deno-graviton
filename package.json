@@ -1,20 +1,20 @@
 {
 	"name": "Deno",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"id": "deno-plugin",
-	"mainSrc": "main.js",
-	"mainDev": "dist/main.js",
+	"mainSrc": "main.ts",
+	"mainDev": "dist/index.js",
 	"author": "Marc Espín Sanz",
-	"main": "main.js",
+	"main": "index.js",
 	"scripts": {
-		"watch": "gvsdk --entry package.json --target plugin --mode dev",
-		"build": "gvsdk --entry package.json --target plugin --mode release"
+		"watch": "gvsdk --project . --target plugin --mode dev",
+		"build": "gvsdk --project . --target plugin --mode release"
 	},
 	"dependencies": {
 		"lodash": "^4.17.19",
 		"yaml": "^1.10.0"
 	},
 	"devDependencies": {
-		"@gveditor/sdk": "^0.2.2"
+		"@gveditor/sdk": "^0.3.7"
 	}
 }
