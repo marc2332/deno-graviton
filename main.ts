@@ -70,19 +70,40 @@ export const entry = async ({ RunningConfig, StatusBarItem, Dialog, puffin: { el
 							file.includes("yaml") || file.includes("yml")
 								? await parse(fileData)
 								: JSON.parse(fileData);
-						return resolve({base,...fileJSON})
+						return base = { base, ...fileJSON }
 					}
-					if(await fs.exists(path.join(dir, 'tsconfig.json'))){
-						const { pluginInstalled } = await TsInfo(dir)
-						base = {
-							...base,
-							"DenoPlugin":{
-								value:`Deno plugin ${pluginInstalled ? "enabled" : "disabled"}`
-							}
+				})
+				if(await fs.exists(path.join(dir, 'tsconfig.json'))){
+					const { pluginInstalled } = await TsInfo(dir)
+					
+					const importmapExists = await fs.exists(path.join(dir, 'import_map.json'))
+
+					base = {
+						...base,
+						"DenoPlugin":{
+							value:`Deno plugin ${pluginInstalled ? "enabled" : "disabled"}`
 						}
-						return resolve(base)
 					}
-				});
+					
+					// * Add import_map.json dependencies
+					if(importmapExists) {
+						let dependencies  = window.require(path.join(dir, 'import_map.json')).imports
+						base.dependencies = {}
+						await Promise.all(Object.keys(dependencies).map( async (dep) => {
+							const depName = dep.split('/')[0]
+							const depValue = dependencies[dep]
+							const cachedFileExists = await fs.exists(path.join(dir, 'imports',`${depName}.ts`))
+							let itemValue = {}
+							if(cachedFileExists) {
+								itemValue[`imports/${depName}.ts`] = ''
+							}else{
+								itemValue = ''
+							}
+							base.dependencies[`[${dep}] ${depValue}`] = itemValue
+						}))
+					}
+				}
+				return resolve(base)
 			});
 		},
 	});
@@ -139,13 +160,9 @@ export const entry = async ({ RunningConfig, StatusBarItem, Dialog, puffin: { el
 		
 		const { tsconfigOk, denoTsconfigFile, msg } = await TsInfo(folderPath)
 		
-		// * it is activated only if the deno plugin is installed in the workspace
-		
 		// * show deno info
 		const allOk = DenoVersion && denoTsconfigFile && tsconfigOk
-
 		
-
 		if(!allOk){
 			DenoStatusBarItem.setLabel('Deno Error')
 			DenoErrors.push({
@@ -174,6 +191,7 @@ const TsInfo =  (folderPath: string): any => {
 		let tsconfigOk = false
 		let msg = ""
 		let tsconfig = null
+		let denoPluginConf = null
 
 		if (denoTsconfigFile) {
 			try {
@@ -192,6 +210,7 @@ const TsInfo =  (folderPath: string): any => {
 
 						} else {
 							tsconfig.compilerOptions.plugins.forEach((plugin: any) => {
+								denoPluginConf = plugin
 								if (plugin.name === "typescript-deno-plugin") {
 									if (!plugin.enable) {
 										msg = "Deno: set 'enable' in true";
@@ -225,7 +244,8 @@ const TsInfo =  (folderPath: string): any => {
 			msg,
 			pluginInstalled,
 			denoTsconfigFile,
-			tsconfig
+			tsconfig,
+			denoPluginConf
 		})
 	})
 }
