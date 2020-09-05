@@ -25,8 +25,12 @@ export interface TsInfoConfig {
 export interface importsInfo {
   [key: string]: {
     [key: string]: {
-      url: string;
-      hash?: string;
+      url: {
+        value: string;
+      };
+      hash?: {
+        value: string;
+      };
     };
   };
 }
