@@ -6,7 +6,7 @@ import path from "path";
 const getFile = (folderPath: string, file: string) =>
   path.join(folderPath, file);
 
-export function resolveImports(dir: string, Notification: any) {
+export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
   const infoDeps: importsInfo = {};
 
   if (fs.existsSync(getFile(dir, "import_map.json"))) {
@@ -31,9 +31,8 @@ export function resolveImports(dir: string, Notification: any) {
             throw `the package '${dep}' must be have a url string type`;
           }
 
-          infoDeps["import_map.json"][dep] = { url: importmap.imports[dep] };
+          infoDeps["import_map.json"][dep] = { url: { value: importmap.imports[dep] } };
         }
-        console.log(importmap);
       }
     }
     catch (err) {
@@ -44,10 +43,12 @@ export function resolveImports(dir: string, Notification: any) {
             ? err
             : (err as Error).message;
 
-      new Notification({
-        title: "Deno",
-        content: msg,
-      });
+      setTimeout(()=> {
+        new Notification({
+          title: "Deno",
+          content: msg,
+        });
+      }, timeOut);
     }
   }
 
@@ -75,8 +76,8 @@ export function resolveImports(dir: string, Notification: any) {
           }
 
           infoDeps["deps.json"][dep] = {
-            url: deps.meta[dep].url,
-            hash: deps.meta[dep].hash,
+            url: { value: "url: " + deps.meta[dep].url },
+            hash: { value: "hash: " + deps.meta[dep].hash },
           };
         }
       }
@@ -89,10 +90,12 @@ export function resolveImports(dir: string, Notification: any) {
             ? err
             : (err as Error).message;
 
-      new Notification({
-        title: "Deno",
-        content: msg,
-      });
+      setTimeout(()=> {
+        new Notification({
+          title: "Deno",
+          content: msg,
+        });
+      }, timeOut)
     }
   }
 

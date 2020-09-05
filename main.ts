@@ -12,13 +12,9 @@ async function entry({
   const DenoVersion = await getDenoVersion();
 
   RunningConfig.data.envs.push({
-    name: "Deno",
+    name: "Deno Dependencies",
     async filter(dir: string) {
-      let base = {
-        DenoVersion: {
-          value: `Deno v${DenoVersion}`,
-        },
-      };
+      let base = {};
 
       // * velociraptor support
       base = velociraptor(dir, base);
@@ -27,39 +23,43 @@ async function entry({
 
       // * notification to activate the plugin
       if (maybeDenoProject(dir) && !pluginInstalled) {
-        new Notification({
+        const notify = new Notification({
           title: "Deno",
+          lifeTime: Infinity,
           content:
-            "some files related to deno have been detected, do you want to activate the plugin?",
+            "some files related to deno have been detected, do you want use deno?",
           buttons: [
             {
-              label: "activate",
+              label: "yes",
               action() {
-                new Dialog({
-                  title: "tip",
-                  content: "remember install typescript-deno-plugin",
-                }).launch();
+                const diag = new Dialog({
+                  title: "Deno",
+                  content: "remember install typescript-deno-plugin and reload graviton",
+                });
+                diag.launch();
+
+                setTimeout(() => {
+                  diag.close();
+                  notify.remove();
+                }, 3000);
               },
             },
             {
               label: "later",
               action() {
-                new Dialog({
-                  title: "deno",
-                  content: "ignored",
-                }).launch();
+                notify.remove();
+                // * do noting ignore
               },
             },
           ],
         });
       }
 
-      if (existManager(dir)) {
-        const depsInfo = resolveImports(dir, Notification);
-        base = { ...base, ...depsInfo };
+      if (pluginInstalled && existManager(dir)) {
+        const DenoDeps = resolveImports(dir, Notification);
+        base = { ...base, ...DenoDeps };
       }
 
-      console.log(base);
       return base;
     },
   });
@@ -84,7 +84,7 @@ async function entry({
             label: "Deno",
             hint: `Deno ${DenoVersion}`,
             action() {
-              new Dialog({
+              const diag = new Dialog({
                 title: "Deno info",
                 component() {
                   return element`
@@ -96,7 +96,13 @@ async function entry({
               					</div>
               				`;
                 },
-              }).launch();
+              });
+              diag.launch();
+
+              // * close 5s later
+              setTimeout(() => {
+                diag.close();
+              }, 5000);
             },
           });
         }
