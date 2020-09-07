@@ -1,6 +1,6 @@
 ## 🦕 Deno Graviton
 
-Deno plugin, allows you to inspect your projects that use Velociprator (https://github.com/umbopepato/velociraptor), and also of TypeScript's Deno Plugin (https://www.npmjs.com/package/typescript-deno-plugin)
+Deno plugin, allows you to inspect your projects that use Velociraptor (https://github.com/umbopepato/velociraptor), and also of TypeScript's Deno Plugin (https://www.npmjs.com/package/typescript-deno-plugin)
 
 ### Setup
 

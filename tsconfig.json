@@ -1,8 +1,6 @@
 {
-	"compilerOptions":{
-		"esModuleInterop":true	
+	"compilerOptions": {
+		"esModuleInterop": true
 	},
-	"files":[
-		"./main.ts"
-	]
+	"files": ["./main.ts"]
 }
