@@ -37,7 +37,7 @@ async function entry({
                   content: "remember install typescript-deno-plugin and reload graviton",
                 });
                 diag.launch();
-
+                // * close all
                 setTimeout(() => {
                   diag.close();
                   notify.remove();

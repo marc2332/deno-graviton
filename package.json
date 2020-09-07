@@ -4,6 +4,7 @@
 	"id": "deno-plugin",
 	"mainSrc": "main.ts",
 	"mainDev": "dist/index.js",
+	"description": "Deno plugin for graviton",
 	"author": "Marc Espín Sanz",
 	"main": "index.js",
 	"scripts": {
