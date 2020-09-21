@@ -67,7 +67,7 @@ export const enum ErrorMessages {
 export function maybeDenoProject(filePath: string): boolean {
   const exist =
     fs.existsSync(path.join(filePath, "import_map.json")) ||
-    fs.existsSync(path.join(filePath, "imports/deps.json")) ||
+    fs.existsSync(path.join(filePath, "imports", "deps.json")) ||
     fs.existsSync(path.join(filePath, "velociraptor.yaml")) ||
     fs.existsSync(path.join(filePath, "velociraptor.yml")) ||
     fs.existsSync(path.join(filePath, "scripts.yaml")) ||
@@ -82,10 +82,10 @@ export function maybeDenoProject(filePath: string): boolean {
  */
 export const TsInfo = (folderPath: string): Promise<TsInfoConfig> => {
   return new Promise(async (res) => {
-    const pluginInstalled = await fs.existsSync(
+    const pluginInstalled = fs.existsSync(
       path.join(folderPath, "/node_modules/typescript-deno-plugin")
     );
-    const denoTsconfigFile = await fs.existsSync(
+    const denoTsconfigFile = fs.existsSync(
       path.join(folderPath, "tsconfig.json")
     );
 

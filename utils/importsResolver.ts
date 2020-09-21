@@ -1,5 +1,4 @@
 import { importMap, importsInfo, Deps } from "./types";
-import { isObject } from "util";
 import fs from "fs-extra";
 import path from "path";
 
@@ -21,7 +20,7 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
       else if (!Object.keys(importmap?.imports).length) {
         throw "'imports' key is a empty object";
       }
-      else if (!isObject(importmap.imports)) {
+      else if (!(importmap.imports !== null && typeof importmap.imports === 'object')) {
         throw "'imports' key must be an object";
       }
       else {
@@ -62,7 +61,7 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
       else if (!Object.keys(deps?.meta).length) {
         throw "'meta' key is a empty object";
       }
-      else if (!isObject(deps.meta)) {
+      else if (!(deps.meta !== null && typeof deps.meta === 'object')) {
         throw "'meta' key must be an object";
       }
       else {
