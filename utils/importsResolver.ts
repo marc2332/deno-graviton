@@ -1,4 +1,4 @@
-import { importMap, importsInfo, Deps } from "./types";
+import { importMap, importsInfo, Deps, Run } from "./types";
 import fs from "fs-extra";
 import path from "path";
 
@@ -6,7 +6,7 @@ const getFile = (folderPath: string, file: string) =>
   path.join(folderPath, file);
 
 export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
-  const infoDeps: importsInfo = {};
+  const infoDeps: importsInfo | Run = {};
 
   if (fs.existsSync(getFile(dir, "import_map.json"))) {
     try {
@@ -20,7 +20,9 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
       else if (!Object.keys(importmap?.imports).length) {
         throw "'imports' key is a empty object";
       }
-      else if (!(importmap.imports !== null && typeof importmap.imports === 'object')) {
+      else if (
+        !(importmap.imports !== null && typeof importmap.imports === "object")
+      ) {
         throw "'imports' key must be an object";
       }
       else {
@@ -30,11 +32,12 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
             throw `the package '${dep}' must be have a url string type`;
           }
 
-          infoDeps["import_map.json"][dep] = { url: { value: importmap.imports[dep] } };
+          infoDeps["import_map.json"][dep] = {
+            url: { value: importmap.imports[dep] },
+          };
         }
       }
-    }
-    catch (err) {
+    } catch (err) {
       const msg =
         err instanceof SyntaxError
           ? "error reading import_map.json file maybe not in correct json format"
@@ -42,7 +45,7 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
             ? err
             : (err as Error).message;
 
-      setTimeout(()=> {
+      setTimeout(() => {
         new Notification({
           title: "Deno",
           content: msg,
@@ -61,7 +64,7 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
       else if (!Object.keys(deps?.meta).length) {
         throw "'meta' key is a empty object";
       }
-      else if (!(deps.meta !== null && typeof deps.meta === 'object')) {
+      else if (!(deps.meta !== null && typeof deps.meta === "object")) {
         throw "'meta' key must be an object";
       }
       else {
@@ -89,12 +92,60 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
             ? err
             : (err as Error).message;
 
-      setTimeout(()=> {
+      setTimeout(() => {
         new Notification({
           title: "Deno",
           content: msg,
         });
-      }, timeOut)
+      }, timeOut);
+    }
+  }
+
+  if (fs.existsSync(getFile(dir, "run.json"))) {
+    try {
+      const run: Run = window.require(getFile(dir, "run.json"));
+
+      if (!run.files) {
+        throw "can't be found 'scripts' key in run.json file";
+      }
+      else {
+        infoDeps["scripts"] = {};
+        for (const [key, value] of Object.entries(run.scripts)) {
+          if (typeof value !== "string") {
+            throw  `the script '${key}' must have string data as value`;
+          }
+          else {
+            //@ts-ignore
+            infoDeps["scripts"][key] = value;
+          }
+        }
+
+        if (run?.files?.length) {
+          infoDeps["filesToWatch"] = {};
+          for (const file in run?.files) {
+            if (typeof file !== "string") {
+              throw "all file paths to watch must be in string format";
+            }
+            //@ts-ignore
+            infoDeps["filesToWatch"][file] = file;
+          }
+        }
+      }
+    }
+    catch (err) {
+      const msg =
+        err instanceof SyntaxError
+          ? "error reading run.json file maybe not in correct json format"
+          : typeof err === "string"
+            ? err
+            : (err as Error).message;
+
+      setTimeout(() => {
+        new Notification({
+          title: "Deno",
+          content: msg,
+        });
+      }, timeOut);
     }
   }
 
@@ -104,7 +155,8 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
 export function existManager(filePath: string): boolean {
   const exist =
     fs.existsSync(path.join(filePath, "import_map.json")) ||
-    fs.existsSync(path.join(filePath, "imports/deps.json"));
+    fs.existsSync(path.join(filePath, "imports/deps.json")) ||
+    fs.existsSync(path.join(filePath, "run.json"));
 
   return exist;
 }

@@ -1,35 +1,18 @@
 ## 🦕 Deno Graviton
 
-Deno plugin, allows you to inspect your projects that use Velociraptor (https://github.com/umbopepato/velociraptor), and also of TypeScript's Deno Plugin (https://www.npmjs.com/package/typescript-deno-plugin)
+install and enjoy
 
-### Setup
-
-create a `tsconfig.json` file with the following configuration:
-
-```json
-{
-	"compilerOptions": {
-		"plugins": [
-			{
-				"name": "typescript-deno-plugin",
-				"enable": true,
-				"importmap": "import_map.json" // optional
-			}
-		]
-	}
-}
-```
-
-restart graviton and enjoy
+> **note**: need deno v1.6.0 or above
 
 ### Thing it allows to:
 
-- full integration through [lsp codemirror](https://github.com/marc2332/lsp-codemirror) [wip]
+- full integration through [lsp codemirror](https://github.com/marc2332/lsp-codemirror)
   - top level await
   - Deno namespace
   - import files using extension
   - support to import maps
-- Inspect velociraptor.yml (scripts.json, etc...) files from Graviton. More info in [Velociraptor](https://github.com/umbopepato/velociraptor)
+- Inspect velociraptor.yml (scripts.json, etc...) files from Graviton.
+- Inspect import_map.json, deps.json, run.json files from Graviton.
 - Run scripts from Graviton
 
 ### 🕹 Developing
