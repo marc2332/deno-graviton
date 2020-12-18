@@ -28,3 +28,10 @@ export interface Deps {
     };
   };
 }
+
+export interface Run {
+  scripts: {
+    [key: string]: string;
+  };
+  files?: string[];
+}

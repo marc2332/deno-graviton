@@ -1,4 +1,4 @@
-import { importMap, importsInfo, Deps } from "./types";
+import { importMap, importsInfo, Deps, Run } from "./types";
 import fs from "fs-extra";
 import path from "path";
 
@@ -6,7 +6,7 @@ const getFile = (folderPath: string, file: string) =>
   path.join(folderPath, file);
 
 export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
-  const infoDeps: importsInfo = {};
+  const infoDeps: importsInfo | Run = {};
 
   if (fs.existsSync(getFile(dir, "import_map.json"))) {
     try {
@@ -102,6 +102,51 @@ export function resolveImports(dir: string, Notification: any, timeOut = 3000) {
   }
 
   if (fs.existsSync(getFile(dir, "run.json"))) {
+    try {
+      const run: Run = window.require(getFile(dir, "run.json"));
+
+      if (!run.files) {
+        throw "can't be found 'scripts' key in run.json file";
+      }
+      else {
+        infoDeps["scripts"] = {};
+        for (const [key, value] of Object.entries(run.scripts)) {
+          if (typeof value !== "string") {
+            throw  `the script '${key}' must have string data as value`;
+          }
+          else {
+            //@ts-ignore
+            infoDeps["scripts"][key] = value;
+          }
+        }
+
+        if (run?.files?.length) {
+          infoDeps["filesToWatch"] = {};
+          for (const file in run?.files) {
+            if (typeof file !== "string") {
+              throw "all file paths to watch must be in string format";
+            }
+            //@ts-ignore
+            infoDeps["filesToWatch"][file] = file;
+          }
+        }
+      }
+    }
+    catch (err) {
+      const msg =
+        err instanceof SyntaxError
+          ? "error reading run.json file maybe not in correct json format"
+          : typeof err === "string"
+            ? err
+            : (err as Error).message;
+
+      setTimeout(() => {
+        new Notification({
+          title: "Deno",
+          content: msg,
+        });
+      }, timeOut);
+    }
   }
 
   return infoDeps;

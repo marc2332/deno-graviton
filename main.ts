@@ -13,6 +13,7 @@ async function entry({
 
   RunningConfig.data.envs.push({
     name: "Deno",
+    prefix: "trex run",
     async filter(dir: string) {
       let base = {};
 
